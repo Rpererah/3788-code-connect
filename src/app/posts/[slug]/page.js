@@ -3,11 +3,26 @@
 import { CardPost } from "@/components/CardPost";
 import { CommentList } from "@/components/CommentList";
 import styles from "./page.module.css";
+import { useQuery } from "@tanstack/react-query";
+
+const fetchPostBySlug = async({slug})=>{
+  const results=await fetch(`/api/post/${slug}`)
+  const data= await results.json()
+  return data
+}
 
 const PagePost = ({ params }) => {
   const { slug } = params;
 
-  const post = null;
+  const {data:post} =useQuery({
+    queryKey:['post',slug],
+    queryFn:()=>fetchPostBySlug({slug}),
+    staleTime:2000,
+    //refetchOnWindowFocus:false //por padrao is true entao ele faz o retched sempre que o usuario sai de tela
+    //gcTime:2000, //-> tempo para jogar no lixo
+    //refetchInterval:2000 //-> tempo para fazer o refetched 
+  })
+
 
   const postRating = null;
 

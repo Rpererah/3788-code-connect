@@ -4,29 +4,51 @@ import { CardPost } from "@/components/CardPost";
 import { Spinner } from "@/components/Spinner";
 import styles from "./page.module.css";
 import Link from "next/link";
-import {useQuery} from '@tanstack/react-query'
+import {useQueries, useQuery} from '@tanstack/react-query'
 const fetchPosts= async ({page}) => {
-  const results = await fetch(`http://localhost:3001/api/posts?page=${page}`)
+  const results = await fetch(`/api/posts?page=${page}`)
   const data = await results.json()
   return data
 }
 
+export const fetchPostsRating = async({postId}) =>{
+  const results=await fetch(`/api/post?postId=${postId}`)
+  const data = await results.json();
 
+  return data;
+}
 
 export default function Home({ searchParams }) {
   const currentPage = parseInt(searchParams?.page || 1);
   const searchTerm = searchParams?.q;
 
-  const isLoading = false;
-  const isFetching = false;
 
-  const ratingsAndCartegoriesMap = null;
 
-  const {data:posts} = useQuery({
+  
+
+  const {data:posts,isLoading,isFetching} = useQuery({
     queryKey:["posts",currentPage],
     queryFn:()=> fetchPosts({page:currentPage})
   })
 
+
+  const postRatingQueries=useQueries({
+    queries:
+    posts?.data.length > 0 ?
+     posts.data.map((post)=>({
+      queryKey:["postHome",post.id],
+      queryFn:()=>fetchPostsRating({postId:post.id}),
+      enabled:!!post.id
+    }) ): []
+  })
+console.log(postRatingQueries)
+
+// const ratingsAndCartegoriesMap=postRatingQueries.reduce((acc,query)=>{
+//   if(!query.isPending && query.data && query.data.id){
+//     acc[query.data.id] = query.data
+//   }
+//   return acc;
+// },{})
   return (
     <main className={styles.grid}>
       {isLoading && (

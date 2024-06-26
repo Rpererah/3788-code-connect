@@ -3,7 +3,7 @@ import { Aside } from "@/components/Aside";
 import "./globals.css";
 import { SearchForm } from "@/components/SearchForm";
 import { ReactQueryProvider } from "./ReactQueryProvider";
-
+import {ReactQueryDevtools} from '@tanstack/react-query-devtools'
 export const metadata = {
   title: "Code Connect",
   description: "Uma rede social para devs!",
@@ -18,10 +18,12 @@ const prompt = Prompt({
 export default function RootLayout({ children }) {
   return (
     <html lang="pt-br" className={prompt.className}>
-      <ReactQueryProvider>
 
+
+      <ReactQueryProvider>
       <body>
         <div className="app-container">
+
           <div>
             <Aside />
           </div>
@@ -30,6 +32,7 @@ export default function RootLayout({ children }) {
             {children}
           </div>
         </div>
+<ReactQueryDevtools initialIsOpen={false}/>
       </body>
       </ReactQueryProvider>
     </html>
