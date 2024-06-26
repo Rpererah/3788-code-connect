@@ -4,6 +4,14 @@ import { CardPost } from "@/components/CardPost";
 import { Spinner } from "@/components/Spinner";
 import styles from "./page.module.css";
 import Link from "next/link";
+import {useQuery} from '@tanstack/react-query'
+const fetchPosts= async ({page}) => {
+  const results = await fetch(`http://localhost:3001/api/posts?page=${page}`)
+  const data = await results.json()
+  return data
+}
+
+
 
 export default function Home({ searchParams }) {
   const currentPage = parseInt(searchParams?.page || 1);
@@ -11,9 +19,13 @@ export default function Home({ searchParams }) {
 
   const isLoading = false;
   const isFetching = false;
-  const posts = [];
 
   const ratingsAndCartegoriesMap = null;
+
+  const {data:posts} = useQuery({
+    queryKey:["posts",currentPage],
+    queryFn:()=> fetchPosts({page:currentPage})
+  })
 
   return (
     <main className={styles.grid}>
